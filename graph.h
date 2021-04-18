@@ -1,11 +1,17 @@
 struct vertex{
 	int id;
-	int predecessor;
+	int pred;
+}
+
+struct edge{
+	int id;
+	struct vertex vertex_u;
+	struct vertex vertex_v;
 	int weight;
 }
 
 struct list_entry{
-	struct vertex;
+	struct edge edge;
 	struct list_entry *next;
 }
 
