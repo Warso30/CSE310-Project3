@@ -1,6 +1,9 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include "util.h"
+#include "heap.h"
+#include "graph.h"
 using namespace std;
 
 int main(int argc, char *argv[]){
@@ -31,8 +34,10 @@ int main(int argc, char *argv[]){
 	in.close();
 	
 	string query_data[4];
-	struct vertex *path = new vertex[num_vertices];
-	struct vertex *heap;
+	struct vertex *vertices = new vertex[num_vertices];
+	int *path = new int[num_vertices];
+	float *dist = new float[num_vertices];
+	int heap_size;
 	int valid = 0;
 	do{
 		int source, s;
@@ -45,7 +50,7 @@ int main(int argc, char *argv[]){
 		cout << str << endl;
 		size_t pos = 0;
 		int i = 0;
-		while ((pos = str.find(" ") != string::npos){
+		while ((pos = str.find(" ")) != string::npos){
 			token = str.substr(0, pos);
 			query_data[i] = token;
 			str.erase(0, pos + 1);
@@ -58,7 +63,7 @@ int main(int argc, char *argv[]){
 			dest = stoi(query_data[2]);
 			int flag = stoi(query_data[3]);			
 			if ((1 <= source && source <= num_vertices) && dest != source && (flag == 0 || flag == 1)){
-				heap = Dijkstra(path, graph, num_vertices, source, dest, flag);
+				heap_size = Dijkstra(vertices, graph, num_vertices, source, dest, flag);
 				valid = 1;	
 			}
 			else
@@ -72,12 +77,39 @@ int main(int argc, char *argv[]){
 			else if (s != source || ((d < 1 || d > num_vertices) || d == s))
 				cout << "Error: invalid source destination pair" << endl;
 			else{
-				
+				struct vertex vertex = vertices[d - 1];
+				if (vertex.inserted == 1){
+					int j = 0;
+					while (vertex.pred != -1){
+						path[j] = vertex.id;
+						dist[j] = vertex.dist;
+						j++;
+						vertex = vertices[vertex.pred];
+					}
+					path[j] = vertex.id;
+					dist[j] = vertex.dist;
+					vertex = vertices[d - 1];
+					if (vertex.deleted == 1)
+						cout << "Shortest path: ";
+					else
+						cout << "Path not known to be shortest: ";
+					print_path(path, j);
+					cout << "The path weight is: ";
+					print_dist(dist, j);
+				}
+				else if (heap_size == 0)
+					cout << "No " << s << "-" << d << " path exists." << endl;
+				else
+					cout << "No " << s << "-" << d << " path has been computed." << endl;
 			}
 		}
 	}
 	while (query_data[0] != "stop");
-	
-		
+
+	delete_list(graph, num_vertices);
+	delete[] edge;
+	delete[] vertices;
+	delete[] path;
+	delete[] dist;
 	return 0;
 }
