@@ -1,17 +1,16 @@
-struct vertex{
-	int id;
-	int pred;
-}
-
 struct edge{
 	int id;
-	struct vertex vertex_u;
-	struct vertex vertex_v;
+	int vertex_u;
+	int vertex_v;
 	int weight;
-}
+};
 
 struct list_entry{
 	struct edge edge;
 	struct list_entry *next;
-}
+};
 
+void list_insert(struct list_entry**, int, struct edge);
+void delete_list(struct list_entry**, int);
+struct edge* find_edge(struct list_entry**, int, int);
+int Dijkstra(struct vertex*, struct list_entry**, int, int, int, int);
