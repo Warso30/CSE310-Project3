@@ -50,16 +50,21 @@ void heap_insert(struct vertex *heap, struct vertex node, int size, int flag){
 	heap[i] = node;
 }
 
-void decrease_key(struct vertex *heap, int vertex, float dist, int flag){
+void decrease_key(struct vertex *heap, struct vertex vertex, int size, int flag){
+	int i;
+	for (i = 0; i < size; i++){
+		if (heap[i].id == vertex.id)
+			break;		
+	}
+
 	if (flag == 1)
-		printf("Decrease key of vertex %d, from %12.4f to %12.4f\n", vertex, heap[vertex - 1].dist, dist);
-	int pos = vertex - 1;
-	if (heap[pos].dist > dist){
-		while (pos > 0 && heap[parent(pos)].dist > dist){
-			heap[pos] = heap[parent(pos)];
-			pos = parent(pos);
+		printf("Decrease key of vertex %d, from %12.4f to %12.4f\n", vertex.id, heap[i].dist, vertex.dist);
+	if (heap[i].dist > vertex.dist){
+		while (i > 0 && heap[parent(i)].dist > vertex.dist){
+			heap[i] = heap[parent(i)];
+			i = parent(i);
 		}
-		heap[pos].dist = dist;
+		heap[i] = vertex;
 	}
 }
 

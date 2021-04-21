@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -19,7 +20,9 @@ int main(int argc, char *argv[]){
 	int num_edges;
 	in >> num_vertices >> num_edges;
 	struct list_entry **graph = new list_entry *[num_vertices];
-	struct edge *edge = new edge[num_edges];
+	for (int i = 0; i < num_vertices; i++)
+		graph[i] = NULL;
+	struct edge *edge = new struct edge[num_edges];
 	for (int i = 0; i < num_edges; i++){
 		in >> edge[i].id >> edge[i].vertex_u >> edge[i].vertex_v >> edge[i].weight;
 		list_insert(graph, edge[i].vertex_u, edge[i]);
@@ -47,7 +50,7 @@ int main(int argc, char *argv[]){
 		string token;
 		string str;
 		getline(cin, str);
-		cout << str << endl;
+		cout << "Query: "<< str << endl;
 		size_t pos = 0;
 		int i = 0;
 		while ((pos = str.find(" ")) != string::npos){
@@ -84,7 +87,7 @@ int main(int argc, char *argv[]){
 						path[j] = vertex.id;
 						dist[j] = vertex.dist;
 						j++;
-						vertex = vertices[vertex.pred];
+						vertex = vertices[vertex.pred - 1];
 					}
 					path[j] = vertex.id;
 					dist[j] = vertex.dist;
@@ -94,8 +97,9 @@ int main(int argc, char *argv[]){
 					else
 						cout << "Path not known to be shortest: ";
 					print_path(path, j);
-					cout << "The path weight is: ";
-					print_dist(dist, j);
+					printf("The path weight is: %12.4f\n", vertex.dist);
+					//cout << "The path weight is: " << vertex.dist << endl;
+					//print_dist(dist, j);
 				}
 				else if (heap_size == 0)
 					cout << "No " << s << "-" << d << " path exists." << endl;

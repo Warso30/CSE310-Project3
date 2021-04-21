@@ -24,23 +24,50 @@ void delete_list(struct list_entry **list, int size){
 	}
 	delete[] list;
 }
-
+/*
 struct edge* find_edge(struct list_entry **graph, int vertex_u, int value){
 	struct list_entry *temp = graph[vertex_u - 1];
 	if (temp == NULL)
 		return NULL;
-	struct edge edge = temp->edge;
+	struct edge *edge = NULL;
 	while (temp != NULL){
-		if (temp->edge.vertex_v > value && temp->edge.vertex_v < edge.vertex_v)
-			edge = temp->edge;
+		if (temp->edge.vertex_v > value){
+			edge = &temp->edge;
+			temp = temp->next;
+			break;
+		}
 		temp = temp->next;
 	}
-	if (edge.vertex_v < value)
-		return &edge;
-	else
-		return NULL;
-}
 
+	while (temp != NULL){
+		if (temp->edge.vertex_v > value && temp->edge.vertex_v < edge->vertex_v)
+			edge = &temp->edge;
+		temp = temp->next;
+	}
+	
+	return edge;
+}
+*/
+struct edge* find_edge(struct list_entry **graph, int vertex_u, int value, int id){
+	struct list_entry *temp = graph[vertex_u - 1];
+	if (temp == NULL)
+		return NULL;
+	struct edge *edge = NULL;
+	if (value == 0)
+		edge = &temp->edge;
+	else{
+		while (temp != NULL){
+			if (temp->edge.vertex_v == value && temp->edge.id == id){
+				temp = temp->next;
+				break;
+			}
+			temp = temp->next;
+		}
+		if (temp != NULL)
+			edge = &temp->edge;
+	}
+	return edge;
+}
 int Dijkstra(struct vertex *vertices, struct list_entry **graph, int num_vertices, int source, int destination, int flag){
 	int heap_size = 0;
 	struct vertex *heap = new vertex[num_vertices];
@@ -52,9 +79,9 @@ int Dijkstra(struct vertex *vertices, struct list_entry **graph, int num_vertice
 		vertices[i].deleted = 0;
 		vertices[i].determined = 0;
 	}
-	vertices[source].dist = 0;
-	vertices[source].inserted = 1;
-	heap_insert(heap, vertices[source], heap_size, flag);
+	vertices[source - 1].dist = 0;
+	vertices[source - 1].inserted = 1;
+	heap_insert(heap, vertices[source - 1], heap_size, flag);
 	heap_size++;
 	while (heap_size != 0){
 		struct vertex vertex_u = extract_min(heap, heap_size, flag);
@@ -64,7 +91,7 @@ int Dijkstra(struct vertex *vertices, struct list_entry **graph, int num_vertice
 		vertices[vertex_u.id - 1] = vertex_u;
 		if (vertex_u.id == destination)
 			break;
-		struct edge *adj = find_edge(graph, vertex_u.id, 0);
+		struct edge *adj = find_edge(graph, vertex_u.id, 0, 0);
 		while (adj != NULL){
 			struct vertex vertex_v = vertices[adj->vertex_v - 1];
 			if (vertex_v.determined == 0){
@@ -77,11 +104,11 @@ int Dijkstra(struct vertex *vertices, struct list_entry **graph, int num_vertice
 						heap_size++;
 					}
 					else
-						decrease_key(heap, vertex_v.id, heap_size, flag);
+						decrease_key(heap, vertex_v, heap_size, flag);
 					vertices[adj->vertex_v - 1] = vertex_v;
 				}
 			}
-			adj = find_edge(graph, vertex_u.id, adj->vertex_v);
+			adj = find_edge(graph, vertex_u.id, adj->vertex_v, adj->id);
 		}
 	}
 	delete[] heap;
