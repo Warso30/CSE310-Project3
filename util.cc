@@ -1,12 +1,18 @@
 #include <stdio.h>
 #include <fstream>
 #include <string>
+#include "util.h"
 using namespace std;
 
+//This function reads the command line.
+//It takes the the command arguments array and an index as parameters.
+//It returns a command argument.
 string read_command(int index, char *argv[]){
 	return argv[index];
 }
 
+//This function prints the source-destination path.
+//It takes a pointer to the path and an index as parameters.
 void print_path(int *path, int index){
 	printf("<");
 	for (int i = index; i >= 0; i--){
@@ -14,15 +20,5 @@ void print_path(int *path, int index){
 			printf("%d, ", path[i]);
 		else
 			printf("%d>\n", path[i]);
-	}
-}
-
-void print_dist(float *dist, int index){
-	printf("weight(");
-	for (int i = index; i >= 0; i--){
-		if (i != 0)
-			printf("%12.4f, ", dist[i]);
-		else
-			printf("%12.4f)\n", dist[i]);
 	}
 }
