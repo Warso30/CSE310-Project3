@@ -1,13 +1,13 @@
 struct edge{
-	int id;
-	int vertex_u;
-	int vertex_v;
-	float weight;
+	int id;//Edge id
+	int vertex_u;//Endpoint of the edge(start)
+	int vertex_v;//Endpoint of the edge(end)
+	float weight;//Edge weight
 };
 
 struct list_entry{
-	struct edge edge;
-	struct list_entry *next;
+	struct edge edge;//Edge in the graph
+	struct list_entry *next;//Next pointer pointing to the next edge
 };
 
 void list_insert(struct list_entry**, int, struct edge);
